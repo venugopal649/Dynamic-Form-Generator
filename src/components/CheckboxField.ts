@@ -1,18 +1,31 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { FieldContainer, Label } from "./_fieldStyles";
 
-function CheckboxField(props) {
-  const [checkedItems, setCheckedItems] = useState(new Map());
+// Define the type for the props
+interface CheckboxFieldProps {
+  label: string;
+  name: string;
+  options: string[];
+  error?: string; // error is optional
+  touched: { [key: string]: boolean }; // touched is an object with keys being the names of the fields
+  handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setFieldValue: (field: string, value: string) => void;
+}
 
-  const handleCheckItem = (e) => {
+const CheckboxField: React.FC<CheckboxFieldProps> = (props) => {
+  const [checkedItems, setCheckedItems] = useState<Map<string, string>>(new Map());
+
+  const handleCheckItem = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let items = new Map(checkedItems);
+
     if (checkedItems.has(name)) {
       items.delete(name);
     } else {
       items.set(name, value);
     }
+
     setCheckedItems(items);
     props.setFieldValue(props.name, Array.from(items.values()).toString());
   };
@@ -21,13 +34,14 @@ function CheckboxField(props) {
     <FieldContainer>
       <div className="label">{props.label}</div>
       {props.options.map((opt, index) => {
+        const checkboxName = `${props.name}-${index}`;
         return (
           <Label key={index}>
             <input
               type="checkbox"
-              name={props.name + "-" + index}
+              name={checkboxName}
               value={opt}
-              checked={checkedItems.get(props.name + "-" + index)}
+              checked={checkedItems.has(checkboxName)}
               onBlur={props.handleBlur}
               onChange={handleCheckItem}
             />
@@ -40,15 +54,6 @@ function CheckboxField(props) {
       )}
     </FieldContainer>
   );
-}
-
-CheckboxField.propTypes = {
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  options: PropTypes.array,
-  error: PropTypes.any,
-  onChange: PropTypes.func.isRequired,
-  setFieldValue: PropTypes.func.isRequired,
 };
 
 export default CheckboxField;
