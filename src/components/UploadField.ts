@@ -1,8 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { FieldContainer, Upload } from "./_fieldStyles";
 
-function UploadField(props) {
+interface UploadFieldProps {
+  label?: string;
+  name: string;
+  value?: any;
+  error?: string;
+  touched: { [key: string]: boolean };
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+}
+
+const UploadField: React.FC<UploadFieldProps> = (props) => {
   return (
     <FieldContainer>
       <div className="label">{props.label}</div>
@@ -18,16 +27,6 @@ function UploadField(props) {
       )}
     </FieldContainer>
   );
-}
-
-UploadField.propTypes = {
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  value: PropTypes.any,
-  error: PropTypes.any,
-  onChange: PropTypes.func.isRequired,
 };
-
-UploadField.defaultValue = {};
 
 export default UploadField;
